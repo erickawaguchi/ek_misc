@@ -6,6 +6,10 @@ syntheticBuckleyJames <- function(timevar, delta, X, n.iter = 4, tol = 1E-8, B =
   fit.km <- survfit(Surv(timevar, (1 - delta)) ~ 1)
   s.est  <- fit.km$surv[fit.km$n.censor == 0]
   s.time <- fit.km$time[fit.km$n.censor == 0]
+  #- If last obsevration is uncensored, the subtract a very small value
+  if (fit.km$n.censor[length(fit.km$n.censor)] == 0) {
+    timevar[which.max(timevar)] <- timevar[which.max(timevar)] - 1E-8
+  }
   G      <- stepfun(s.time, c(1, s.est)) #Censoring distribution 
   t.koul <- (timevar * delta) / G(timevar)
   
